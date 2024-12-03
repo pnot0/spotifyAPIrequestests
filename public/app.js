@@ -9,10 +9,10 @@
  */
 
 //will get clientID of user created API from json.config
-const clientID = '';
+const clientID = 'your-client-id-here';
 
 //will get URL from json.config, url will be the esp32 maybe so user doesnt need to change it
-const redirectUrl = 'http://127.0.0.0:5500/public/';  
+const redirectUrl = 'your-local-host';  
 
 const authorizationEndpoint = "https://accounts.spotify.com/authorize";
 const tokenEndpoint = "https://accounts.spotify.com/api/token";
