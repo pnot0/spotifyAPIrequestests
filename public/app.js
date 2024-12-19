@@ -8,11 +8,13 @@
  * https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
  */
 
+
+
 //will get clientID of user created API from json.config
-const clientID = '';
+const clientID = 'f8c8cb559b5245328a674b2e1771478e';
 
 //will get URL from json.config, url will be the esp32 maybe so user doesnt need to change it
-const redirectUrl = 'http://127.0.0.0:5500/public/';  
+const redirectUrl = window.location.href.toString();  
 
 const authorizationEndpoint = "https://accounts.spotify.com/authorize";
 const tokenEndpoint = "https://accounts.spotify.com/api/token";
@@ -58,23 +60,25 @@ if (currentToken.access_token) {
   const playbackState = await getPlaybackState();
   console.log(playbackState);
 } else {
-    //TODO: let user login on website using oAuth2 with spotify
+  //TODO: let user login on website using oAuth2 with spotify
+  console.log("no token");
 }
 
 //temp function
 async function loginWithSpotifyClick() {
   await redirectToSpotifyAuthorize();
 }
+
 window.loginWithSpotifyClick = loginWithSpotifyClick;
 
 async function redirectToSpotifyAuthorize() {
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const randomValues = crypto.getRandomValues(new Uint8Array(64));
+  const randomValues = generateRandomValues(new Uint8Array(64));
   const randomString = randomValues.reduce((acc, x) => acc + possible[x % possible.length], "");
 
   const code_verifier = randomString;
   const data = new TextEncoder().encode(code_verifier);
-  const hashed = await crypto.subtle.digest('SHA-256', data);
+  const hashed = await hashWithSHA256(data);
 
   const code_challenge_base64 = btoa(String.fromCharCode(...new Uint8Array(hashed)))
     .replace(/=/g, '')
@@ -95,6 +99,20 @@ async function redirectToSpotifyAuthorize() {
 
   authUrl.search = new URLSearchParams(params).toString();
   window.location.href = authUrl.toString(); // Redirect the user to the authorization server for login
+}
+
+function generateRandomValues(size) {
+      const randomBytes = forge.random.getBytesSync(size);
+      const randomArray = new Uint8Array(size);
+      for (let i = 0; i < size; i++) {
+          randomArray[i] = randomBytes.charCodeAt(i);
+      }
+      return randomArray;
+} 
+
+function hashWithSHA256(data) {
+    const hash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Hex);
+    return hash;
 }
 
 async function getToken(code) {
