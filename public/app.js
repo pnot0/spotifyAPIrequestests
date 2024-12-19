@@ -11,7 +11,7 @@
 
 
 //will get clientID of user created API from json.config
-const clientID = 'f8c8cb559b5245328a674b2e1771478e';
+const clientID = '';
 
 //will get URL from json.config, url will be the esp32 maybe so user doesnt need to change it
 const redirectUrl = window.location.href.toString();  
